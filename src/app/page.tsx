@@ -1,3 +1,4 @@
+import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 import { CreatePost } from "~/app/_components/create-post";
@@ -40,6 +41,9 @@ export default async function Home() {
           <p className="text-2xl text-white">
             {hello ? hello.greeting : "Loading tRPC query..."}
           </p>
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <UserButton afterSignOutUrl="/" />
         </div>
 
         <CrudShowcase />
