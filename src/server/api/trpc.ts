@@ -6,13 +6,14 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { inferRouterOutputs, initTRPC } from "@trpc/server";
+import { TRPCError, inferRouterOutputs, initTRPC } from "@trpc/server";
 import { type NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "~/server/db";
 import { AppRouter } from "./root";
+import { getAuth } from "@clerk/nextjs/server";
 
 /**
  * 1. CONTEXT
@@ -51,10 +52,15 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = (opts: { req: NextRequest }) => {
   // Fetch stuff that depends on the request
+  const session = getAuth(opts.req);
+  const userId = session.userId;
 
-  return createInnerTRPCContext({
-    headers: opts.req.headers,
-  });
+  return {
+    userId,
+    ...createInnerTRPCContext({
+      headers: opts.req.headers,
+    }),
+  };
 };
 
 /**
@@ -101,5 +107,29 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You must be logged in to do that",
+    });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      userId: ctx.userId,
+    },
+  });
+});
+
+/**
+ * Private (authenticated) procedure
+ *
+ * This is the base piece you use to build new queries and mutations on your tRPC API. It guarantees
+ * that a user querying is authorized, and you can access user session data.
+ */
+export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
 
 export type RouterOutput = inferRouterOutputs<AppRouter>;
