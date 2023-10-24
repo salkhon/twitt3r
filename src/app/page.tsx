@@ -12,13 +12,13 @@ import type { RouterOutput } from "~/server/api/trpc";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { LoadingSpinner } from "./_components/loading";
 
 dayjs.extend(relativeTime);
 
 export default async function Home() {
   //* this is SSR
   const user = await currentUser();
-  const posts = await api.post.getAll.query();
 
   return (
     <main className="flex h-screen justify-center">
@@ -26,8 +26,9 @@ export default async function Home() {
         <div className="flex justify-end border-b border-slate-400 p-4">
           <div>
             <ClerkLoading>
-              <p>Loading...</p>
+              <LoadingSpinner />
             </ClerkLoading>
+
             <ClerkLoaded>
               {!!user ? <UserButton afterSignOutUrl="/" /> : <SignInButton />}
             </ClerkLoaded>
@@ -40,16 +41,30 @@ export default async function Home() {
           </div>
         )}
 
-        <div className="flex flex-col">
-          {posts.map((postWithAuthor) => (
-            <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
-          ))}
-        </div>
+        <Feed />
       </div>
     </main>
   );
 }
 
+/**
+ * This is a component that will render a list of posts (Feed of tweets)
+ */
+async function Feed() {
+  const posts = await api.post.getAll.query();
+
+  return (
+    <div className="flex flex-col">
+      {posts.map((postWithAuthor) => (
+        <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * This is a component that will render a single post
+ */
 // this is where trpc magic shines. We need a post to render this view. That can be INFERRED from existing routes
 type PostWithUser = RouterOutput["post"]["getAll"][number];
 function PostView(props: PostWithUser) {
@@ -63,7 +78,7 @@ function PostView(props: PostWithUser) {
         width="12"
         className="h-12 w-12 rounded-full"
       />
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-1">
         <div className="flex gap-4 text-slate-300">
           <span>{`@${author.username}`}</span>
           <span>{"·"}</span>
@@ -71,7 +86,7 @@ function PostView(props: PostWithUser) {
             post.createdAt,
           ).fromNow()}`}</span>
         </div>
-        <span>{post.content}</span>
+        <span className="text-2xl">{post.content}</span>
       </div>
     </div>
   );

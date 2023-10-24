@@ -2,12 +2,13 @@
 
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { LoadingSpinner } from "./loading";
 
 export function CreatePostWizard() {
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { isSignedIn, user, isLoaded: userLoaded } = useUser();
 
+  if (!userLoaded) return <LoadingSpinner size={48} />;
   if (!isSignedIn || !user) return null;
-  if (!isLoaded) return <p>Loading...</p>;
 
   return (
     <div className="flex w-full gap-3">
