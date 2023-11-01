@@ -4,4 +4,27 @@
 
 body {
   @apply bg-black text-slate-100;
+  overscroll-behavior: none;
+}
+
+/* Hide the default scrollbar */
+::-webkit-scrollbar {
+  display: none;
+  width: 8px; /* Adjust to your preferred thickness */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent; /* Set the scrollbar track to be transparent */
+}
+
+/* Thumb */
+::-webkit-scrollbar-thumb {
+  background: rgb(
+    148,
+    163,
+    184,
+    0.5
+  ); /* Set the scrollbar thumb to be semi-transparent black */
+  border-radius: 3px; /* Add rounded corners to the thumb */
 }

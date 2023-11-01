@@ -131,5 +131,3 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
  * that a user querying is authorized, and you can access user session data.
  */
 export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
-
-export type RouterOutput = inferRouterOutputs<AppRouter>;

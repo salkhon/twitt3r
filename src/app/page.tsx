@@ -9,34 +9,33 @@ import {
 import { CreatePostWizard } from "./_components/create-post-wizard";
 import { LoadingSpinner } from "./_components/loading";
 import { Feed } from "./_components/feed";
+import PageLayout from "./_components/layout";
 
 export default async function Home() {
   //* this is SSR
   const user = await currentUser();
 
   return (
-    <main className="flex h-screen justify-center">
-      <div className="w-full border-x border-slate-400 md:max-w-4xl">
-        <div className="flex justify-end border-b border-slate-400 p-4">
-          <div>
-            <ClerkLoading>
-              <LoadingSpinner />
-            </ClerkLoading>
+    <PageLayout>
+      <div className="flex justify-end border-b border-slate-400 p-4">
+        <div>
+          <ClerkLoading>
+            <LoadingSpinner />
+          </ClerkLoading>
 
-            <ClerkLoaded>
-              {!!user ? <UserButton afterSignOutUrl="/" /> : <SignInButton />}
-            </ClerkLoaded>
-          </div>
+          <ClerkLoaded>
+            {!!user ? <UserButton afterSignOutUrl="/" /> : <SignInButton />}
+          </ClerkLoaded>
         </div>
-
-        {!!user && (
-          <div className="flex border-b border-slate-400 p-4">
-            <CreatePostWizard />
-          </div>
-        )}
-
-        <Feed />
       </div>
-    </main>
+
+      {!!user && (
+        <div className="flex border-b border-slate-400 p-4">
+          <CreatePostWizard />
+        </div>
+      )}
+
+      <Feed />
+    </PageLayout>
   );
 }

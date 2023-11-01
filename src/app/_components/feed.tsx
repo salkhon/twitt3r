@@ -1,11 +1,11 @@
 "use client";
 import { api as clientApi } from "~/trpc/react";
 import { LoadingPage } from "./loading";
-import type { RouterOutput } from "~/server/api/trpc";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
+import { type RouterOutputs } from "~/trpc/shared";
 
 dayjs.extend(relativeTime);
 
@@ -31,7 +31,7 @@ export function Feed() {
  * This is a component that will render a single post
  */
 // this is where trpc magic shines. We need a post to render this view. That can be INFERRED from existing routes
-type PostWithUser = RouterOutput["post"]["getAll"][number];
+type PostWithUser = RouterOutputs["post"]["getAll"][number];
 function PostView(props: PostWithUser) {
   const { post, author } = props;
   return (
@@ -45,7 +45,7 @@ function PostView(props: PostWithUser) {
       />
       <div className="flex flex-col gap-1">
         <div className="flex gap-4 text-slate-300">
-          <Link href={`/${author.id}`}>
+          <Link href={`/${author.username}`}>
             <span>{`@${author.username}`}</span>
           </Link>
 
