@@ -1,6 +1,7 @@
 import { api } from "~/trpc/server";
 import PageLayout from "../_components/layout";
 import Image from "next/image";
+import ProfileFeed from "../_components/userpostfeed";
 
 /**
  * This is a page that will render a single user profile
@@ -27,6 +28,7 @@ export default async function GET({
       </div>
       <div className="mt-16 p-4 text-2xl font-bold">{`@${user.username}`}</div>
       <div className="w-full border-b border-slate-400"></div>
+      <ProfileFeed userId={user.id} />
     </PageLayout>
   );
 }
