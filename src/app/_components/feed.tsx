@@ -5,6 +5,7 @@ import type { RouterOutput } from "~/server/api/trpc";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -44,11 +45,17 @@ function PostView(props: PostWithUser) {
       />
       <div className="flex flex-col gap-1">
         <div className="flex gap-4 text-slate-300">
-          <span>{`@${author.username}`}</span>
+          <Link href={`/${author.id}`}>
+            <span>{`@${author.username}`}</span>
+          </Link>
+
           <span>{"·"}</span>
-          <span className="font-thin">{`${dayjs(
-            post.createdAt,
-          ).fromNow()}`}</span>
+
+          <Link href={`/post/${post.id}`}>
+            <span className="font-thin">{`${dayjs(
+              post.createdAt,
+            ).fromNow()}`}</span>
+          </Link>
         </div>
         <span className="text-2xl">{post.content}</span>
       </div>
