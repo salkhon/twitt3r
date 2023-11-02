@@ -2,6 +2,9 @@ name: CI
 
 on: [push, pull_request]
 
+env:
+  DATABASE_URL: https://example.com
+
 jobs:
   build:
     runs-on: ubuntu-latest
